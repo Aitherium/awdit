@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "awdit"
+version = "0.1.0"
+description = "An append-only audit trail whose gaps are detectable — hash-chained records, and an anchor so truncation cannot pass as silence."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+# No dependencies, deliberately. An audit log that cannot be read without
+# installing something is one nobody reads during an incident, and hashlib +
+# json in the stdlib are the whole requirement.
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+
+[project.scripts]
+awdit = "awdit.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/Aitherium/awdit"
+Documentation = "https://github.com/Aitherium/awdit#readme"
+Repository = "https://github.com/Aitherium/awdit.git"
+Issues = "https://github.com/Aitherium/awdit/issues"
+
+[tool.setuptools]
+packages = ["awdit"]
