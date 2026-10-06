@@ -1,0 +1,30 @@
+# awdit
+
+> An append-only audit trail whose gaps are DETECTABLE.
+
+An audit log you can silently delete from is decoration. Most are. The property that matters is not "it records" but "a missing record is visible".
+
+## Install
+
+```
+pip install awdit
+```
+
+## Use it in 30 seconds
+
+Write one sensitive action to it and then try to remove the record.
+
+## Composes with
+
+- [awbac](https://aitherium.github.io/awbac/) — Role-based access control that fails closed and explains itself.
+- [awseal](https://aitherium.github.io/awseal/) — Sign an artifact so a stranger can verify it.
+
+## Where it lives
+
+- Repo: https://github.com/Aitherium/awdit
+- Docs: https://aitherium.github.io/awdit/
+- Manifest (keys + the one-line adoption story): https://aitherium.github.io/awdit/aither-manifest.json
+
+This repository is mirrored from the AitherOS monorepo by `.github/workflows/sync-awdit.yml`; hand edits made here are overwritten on the next sync — change the source instead.
+
+Everything Aitherium, in one file for agents: https://aitherium.com/llms.txt
