@@ -11,5 +11,15 @@
     "awbac",
     "awseal"
   ],
-  "includes": []
+  "includes": [],
+  "metrics": {
+    "files": {
+      "value": 25,
+      "as_of": "2026-11-08T07:57:01-08:00"
+    },
+    "tests": {
+      "value": 1,
+      "as_of": "2026-11-08T07:57:01-08:00"
+    }
+  }
 }
