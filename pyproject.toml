@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "awdit"
-version = "0.1.0"
+version = "0.1.1"
 description = "An append-only audit trail whose gaps are detectable — hash-chained records, and an anchor so truncation cannot pass as silence."
 readme = "README.md"
 requires-python = ">=3.10"

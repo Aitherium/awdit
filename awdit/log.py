@@ -85,11 +85,61 @@ def head(log_path: str | os.PathLike[str]) -> tuple[str, int]:
     return prev, n
 
 
+#: How far back from the end `_anchored_head` looks for the last record. A record
+#: longer than this falls back to the full read; it is never a wrong answer.
+TAIL_BYTES = 65536
+
+
+def _anchored_head(path: Path) -> tuple[str, int] | None:
+    """(head, count) from the anchor, in constant time -- or None to read the log.
+
+    Reading the whole log to find its head makes every append cost as much as
+    the log is long, so a log written on a busy path gets slower all day. The
+    anchor already holds the answer; the only question is whether it can be
+    believed, and that is checked against the log itself: the LAST record on
+    disk must be the one the anchor names.
+
+    Every doubt answers None, and the caller reads the log: no anchor, a
+    corrupt one, a torn last line, a last record that does not parse or carries
+    a different hash (an append died between the record and the anchor, or
+    somebody edited the tail). Nothing here can make a tampered log look whole;
+    it only declines to take the short cut.
+    """
+    anchor = read_anchor(path)
+    if not anchor or anchor.get("corrupt"):
+        return None
+    want, count = anchor.get("head"), anchor.get("count")
+    if not isinstance(want, str) or type(count) is not int or count <= 0:
+        return None
+    try:
+        with path.open("rb") as fh:
+            fh.seek(0, os.SEEK_END)
+            size = fh.tell()
+            back = min(size, TAIL_BYTES)
+            fh.seek(size - back)
+            tail = fh.read(back)
+    except OSError:
+        return None
+    if not tail.endswith(b"\n"):
+        return None
+    body = tail[:-1]
+    cut = body.rfind(b"\n")
+    if cut < 0 and back < size:
+        return None                      # the last record is longer than the window
+    try:
+        last = json.loads(body[cut + 1:])
+    except ValueError:
+        return None
+    if not isinstance(last, dict) or last.get("hash") != want:
+        return None
+    return want, count
+
+
 def append(log_path: str | os.PathLike[str], event: str, **fields: Any) -> dict[str, Any]:
     """Append one record and update the anchor. Returns the stored record."""
     path = Path(log_path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    prev, count = head(path)
+    prev, count = _anchored_head(path) or head(path)
     body = {"ts": time.time(), "event": event, "prev": prev, "data": fields}
     record = dict(body)
     record["hash"] = digest_record(prev, body)

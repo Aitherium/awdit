@@ -14,5 +14,5 @@ Part of the `aw` family (awgit, awgraph, awseal, awnode, awdk, …).
 from .log import GENESIS, append, head, read, read_anchor
 from .verify import Result, verify
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __all__ = ["append", "read", "head", "read_anchor", "verify", "Result", "GENESIS"]
